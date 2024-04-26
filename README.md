@@ -3,6 +3,8 @@
 [![NPM version](https://badge.fury.io/js/electron-log.svg)](https://badge.fury.io/js/electron-log)
 [![Downloads](https://img.shields.io/npm/dw/electron-log)](https://img.shields.io/npm/dw/electron-log)
 
+> fork comments: fixed an issue when packed by [electron-vite](https://electron-vite.org/guide/source-code-protection#enable-bytecode-to-protect-your-electron-source-code) with bytecodePlugin enabled: https://github.com/alex8088/electron-vite/issues/156
+
 Simple logging module Electron/Node.js/NW.js application.
 No dependencies. No complicated configuration.
 
@@ -20,8 +22,10 @@ supports Node.js 0.10+ and almost any Electron build.
 
 Install with [npm](https://npmjs.org/package/electron-log):
 
-    npm install electron-log
-    
+~~npm install electron-log~~
+
+    npm install https://github.com/Harley-xk/electron-log
+
 ## Usage
 
 ### Main process
