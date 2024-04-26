@@ -4,60 +4,8 @@ class EventLogger {
   disposers = [];
   format = '{eventSource}#{eventName}:';
   formatters = {
-    app: {
-      'certificate-error': ({ args }) => {
-        return this.arrayToObject(args.slice(1, 4), [
-          'url',
-          'error',
-          'certificate',
-        ]);
-      },
-      'child-process-gone': ({ args }) => {
-        return args.length === 1 ? args[0] : args;
-      },
-      'render-process-gone': ({ args: [webContents, details] }) => {
-        return details && typeof details === 'object'
-          ? { ...details, ...this.getWebContentsDetails(webContents) }
-          : [];
-      },
-    },
-
-    webContents: {
-      'console-message': ({ args: [level, message, line, sourceId] }) => {
-        // 0: debug, 1: info, 2: warning, 3: error
-        if (level < 3) {
-          return undefined;
-        }
-
-        return { message, source: `${sourceId}:${line}` };
-      },
-      'did-fail-load': ({ args }) => {
-        return this.arrayToObject(args, [
-          'errorCode',
-          'errorDescription',
-          'validatedURL',
-          'isMainFrame',
-          'frameProcessId',
-          'frameRoutingId',
-        ]);
-      },
-      'did-fail-provisional-load': ({ args }) => {
-        return this.arrayToObject(args, [
-          'errorCode',
-          'errorDescription',
-          'validatedURL',
-          'isMainFrame',
-          'frameProcessId',
-          'frameRoutingId',
-        ]);
-      },
-      'plugin-crashed': ({ args }) => {
-        return this.arrayToObject(args, ['name', 'version']);
-      },
-      'preload-error': ({ args }) => {
-        return this.arrayToObject(args, ['preloadPath', 'error']);
-      },
-    },
+    app: this.buildAppFormatters(),
+    webContents: this.buildWebContentsFormatters(),
   };
 
   events = {
@@ -120,6 +68,65 @@ class EventLogger {
 
     if (typeof scope === 'string') {
       this.scope = scope;
+    }
+  }
+    
+  buildAppFormatters () {
+    return {
+      'certificate-error': ({ args }) => {
+        return this.arrayToObject(args.slice(1, 4), [
+          'url',
+          'error',
+          'certificate',
+        ])
+      },
+      'child-process-gone': ({ args }) => {
+        return args.length === 1 ? args[0] : args
+      },
+      'render-process-gone': ({ args: [webContents, details] }) => {
+        return details && typeof details === 'object'
+          ? { ...details, ...this.getWebContentsDetails(webContents) }
+          : []
+      },
+    }
+  }
+
+  buildWebContentsFormatters () {
+    return {
+      'console-message': ({ args: [level, message, line, sourceId] }) => {
+        // 0: debug, 1: info, 2: warning, 3: error
+        if (level < 3) {
+          return undefined
+        }
+
+        return { message, source: `${sourceId}:${line}` }
+      },
+      'did-fail-load': ({ args }) => {
+        return this.arrayToObject(args, [
+          'errorCode',
+          'errorDescription',
+          'validatedURL',
+          'isMainFrame',
+          'frameProcessId',
+          'frameRoutingId',
+        ])
+      },
+      'did-fail-provisional-load': ({ args }) => {
+        return this.arrayToObject(args, [
+          'errorCode',
+          'errorDescription',
+          'validatedURL',
+          'isMainFrame',
+          'frameProcessId',
+          'frameRoutingId',
+        ])
+      },
+      'plugin-crashed': ({ args }) => {
+        return this.arrayToObject(args, ['name', 'version'])
+      },
+      'preload-error': ({ args }) => {
+        return this.arrayToObject(args, ['preloadPath', 'error'])
+      },
     }
   }
 
